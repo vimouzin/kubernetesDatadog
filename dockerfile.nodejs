@@ -1,0 +1,34 @@
+# Stage 1: Pull datadog-init for linux/amd64
+FROM --platform=linux/amd64 gcr.io/datadoghq/serverless-init:latest as datadog-init
+
+# Stage 2: Application setup with linux/amd64
+FROM --platform=linux/amd64 node:18-bullseye
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy the package files and install dependencies
+COPY package*.json ./
+RUN npm install
+RUN npm install dd-trace --save
+
+
+# Copy the application source code
+COPY . .
+
+# Expose the application port
+EXPOSE 8080
+ENV DD_SERVICE=nodeapp
+ENV DD_ENV=cloud-run-nodejs
+ENV DD_VERSION=1.0.0
+
+
+# Copy the linux/amd64 version of datadog-init from the first stage
+COPY --from=datadog-init /datadog-init /usr/src/app/datadog-init
+
+# Ensure datadog-init has execute permissions
+RUN chmod +x /usr/src/app/datadog-init
+
+# Use the serverless-init as the entrypoint
+ENTRYPOINT ["/usr/src/app/datadog-init"]
+CMD ["node", "app.js"]
