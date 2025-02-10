@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app-kuber
+  labels:
+    app: node-app-kuber
+  annotations:
+    admission.datadoghq.com/enabled: "true"  # ✅ Required for Auto-Injection
+    ad.datadoghq.com/node-app-kuber.logs: '[{"source":"nodejs","service":"node-app-kuber"}]'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-app-kuber
+  template:
+    metadata:
+      labels:
+        app: node-app-kuber
+        admission.datadoghq.com/enabled: "true"  # ✅ Required for Auto-Injection
+      annotations:
+          ad.datadoghq.com/node-app-kuber.logs: '[{"source":"nodejs","service":"node-app-kuber"}]'
+    spec:
+      containers:
+        - name: node-app-kuber
+          image: vimouzin12/node-app-kuber:latest
+          env:
+            - name: DD_LOGS_INJECTION
+              value: "true"
+            - name: DD_SERVICE
+              value: "node-app-kuber"
+            - name: DD_ENV
+              value: "prod"
+            - name: DD_VERSION
+              value: "1.0.0"
+            - name: DD_AGENT_HOST
+              value: "datadog-agent"

@@ -1,10 +1,4 @@
-const tracer = require('dd-trace').init({
-    service: process.env.DD_SERVICE || 'nodeapp',
-    env: process.env.DD_ENV || 'development',
-    version: process.env.DD_VERSION || '1.0.0',
-    logInjection: true, // Enables trace-log correlation
-    debug: true
-});
+
 const express = require('express');
 const axios = require('axios');
 const winston = require('winston');
@@ -17,8 +11,8 @@ const logger = winston.createLogger({
     winston.format.json()       // Formats logs as JSON
   ),
   transports: [
-    new winston.transports.Console(), // Logs to the console
-    new winston.transports.File({ filename: 'app.log' }) // Logs to a file
+    new winston.transports.Console() // Logs to the console
+    //new winston.transports.File({ filename: 'app.log' }) // Logs to a file
   ]
 });
 

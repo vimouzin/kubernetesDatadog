@@ -1,0 +1,34 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+  namespace: default
+spec:
+  global:
+    site: "datadoghq.com"
+  features:
+    apm:
+      enabled: true
+      hostPortConfig:
+        enabled: true
+        hostPort: 8126
+      instrumentation:
+        enabled: true
+        libVersions:
+          java: "5"
+          dotnet: "3"
+          python: "2"
+          js: "5"
+    admissionController:
+      enabled: true  # ✅ Enables APM Auto-Injection
+    logCollection:
+      enabled: true
+      containerCollectAll: false
+    usm:
+      enabled: true
+    npm:
+      enabled: true
+    liveProcessCollection:
+      enabled: true
+    orchestratorExplorer:
+      enabled: true  
