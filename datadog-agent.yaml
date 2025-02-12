@@ -4,7 +4,30 @@ metadata:
   name: datadog
   namespace: default
 spec:
+  override:
+    nodeagent:
+      extraConfd:
+        configDataMap:
+              postgres.yaml: |-
+                cluster_check: true
+                init_config:
+                instances:
+                  - dbm: true
+                    host: vitor-m.postgres.database.azure.com
+                    port: 5432
+                    username: 'datadog'
+                    password: ''
+                    ssl: 'require'
+                    azure:
+                      deployment_type: 'FlexibleServer'
+                      fully_qualified_domain_name: 'vitor-m.postgres.database.azure.com'  
   global:
+    kubelet:
+      tlsVerify: false
+    credentials:
+      apiSecret:
+        secretName: "datadog-secret"
+        keyName: "api-key"
     site: "datadoghq.com"
   features:
     apm:
@@ -15,9 +38,6 @@ spec:
       instrumentation:
         enabled: true
         libVersions:
-          java: "5"
-          dotnet: "3"
-          python: "2"
           js: "5"
     admissionController:
       enabled: true  # ✅ Enables APM Auto-Injection
